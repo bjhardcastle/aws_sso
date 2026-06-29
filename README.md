@@ -1,0 +1,1 @@
+Run `setup-aws-sso.cmd` to configure AWS SSO.
