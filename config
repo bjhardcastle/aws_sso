@@ -1,0 +1,22 @@
+[profile AINDDevelopersAccess]
+sso_session = aind_sso
+sso_account_id = 467914378000
+sso_role_name = AINDDevelopersAccess
+region = us-west-2
+
+[profile AINDDataAnalystAccess]
+sso_session = aind_sso
+sso_account_id = 467914378000
+sso_role_name = AINDDataAnalystAccess
+region = us-west-2
+
+[profile AINDScientistsAccess]
+sso_session = aind_sso
+sso_account_id = 467914378000
+sso_role_name = AINDScientistsAccess
+region = us-west-2
+
+[sso-session aind_sso]
+sso_start_url = https://d-92671392b4.awsapps.com/start
+sso_region = us-west-2
+sso_registration_scopes = sso:account:access

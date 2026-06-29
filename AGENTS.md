@@ -1,0 +1,9 @@
+- install AWS CLI tool https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+- copy `./config` to `~/.aws/config`
+- there are multiple roles that may be assigned to a user, try each in order of priority:
+    - `AINDDevelopersAccess`
+    - `AINDDataAnalystAccess`
+    - `AINDScientistsAccess`
+- set env var AWS_PROFILE={role_name}
+- configure AWS CLI with `aws sso login`
+- check `aws s3 ls` returns a list of buckets
