@@ -45,6 +45,47 @@ function Test-IsAdministrator {
     return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
+function Clear-AwsCredentialEnvironmentVariables {
+    $credentialVariableNames = @(
+        "AWS_ACCESS_KEY_ID",
+        "AWS_SECRET_ACCESS_KEY"
+    )
+
+    $processVariableNames = @(
+        $credentialVariableNames |
+            Where-Object { Test-Path -LiteralPath "Env:\$_" }
+    )
+
+    $userEnvironmentVariables = [Environment]::GetEnvironmentVariables("User")
+    $userVariableNames = @(
+        $credentialVariableNames |
+            Where-Object { $userEnvironmentVariables.Contains($_) }
+    )
+
+    $namesToClear = @($processVariableNames + $userVariableNames) | Sort-Object -Unique
+    if (-not $namesToClear -or $namesToClear.Count -eq 0) {
+        return
+    }
+
+    Write-Step "Clearing static AWS credential environment variables"
+
+    $nameList = $namesToClear -join ", "
+    if ($DryRun) {
+        Write-Detail "Dry run: would unset $nameList."
+        return
+    }
+
+    foreach ($name in $processVariableNames) {
+        Remove-Item -LiteralPath "Env:\$name" -ErrorAction SilentlyContinue
+    }
+
+    foreach ($name in $userVariableNames) {
+        [Environment]::SetEnvironmentVariable($name, $null, "User")
+    }
+
+    Write-Detail "Unset $nameList."
+}
+
 function Resolve-AwsCli {
     $candidatePaths = [System.Collections.Generic.List[string]]::new()
 
@@ -511,6 +552,8 @@ $($result.Output)
 "@
     }
 }
+
+Clear-AwsCredentialEnvironmentVariables
 
 Write-Step "Preparing AWS SSO setup for profiles"
 Write-Detail ($ProfileNames -join ", ")
